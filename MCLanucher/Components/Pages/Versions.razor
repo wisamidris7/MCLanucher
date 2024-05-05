@@ -1,0 +1,68 @@
+@page "/versions"
+@using CmlLib.Core.Auth
+@using CmlLib.Core.Version
+@using MCLanucher.Components.Layout
+@inject CMLauncher CMLauncher
+<h1>These are all minecraft versions</h1>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width:100%">Version</th>
+            <th class="text-end" style="min-width: 240px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="overflow-auto">
+        @if (mVersions != null)
+        {
+            var versions = Directory.GetDirectories(CMLauncher.MinecraftPath.Versions).Select(e => e.Split('\\').LastOrDefault());
+            <Virtualize Items="mVersions.Where(e => e.MType == MVersionType.Release).OrderByDescending(e => e.ReleaseTime).ToArray()">
+                <tr>
+                    <td>@context.Name</td>
+                    @if (!versions.Contains(context.Name))
+                    {
+                        <td class="text-end"><button disabled="@(!MainLayout.CanInteractive)" class="btn btn-outline-dark" @onclick="() => Install(context.GetVersion())">Install and play</button></td>
+                    }
+                    else
+                    {
+                        <td class="text-end"><button disabled="@(!MainLayout.CanInteractive)" class="btn btn-dark" @onclick="() => Install(context.GetVersion())">Play now</button></td>
+                    }
+                </tr>
+
+            </Virtualize>
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">
+                    <div class="d-flex w-100 justify-content-center align-items-center">
+                        <div class="spinner-border"></div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    public MVersionCollection mVersions { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            mVersions = await CMLauncher.GetAllVersionsAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    public async Task Install(MVersion version)
+    {
+        var process = await CMLauncher.CreateProcessAsync(version, new MLaunchOption
+            {
+                MaximumRamMb = 2048,
+                Session = MSession.CreateOfflineSession("hello123"),
+            });
+        process.Start();
+    }
+}

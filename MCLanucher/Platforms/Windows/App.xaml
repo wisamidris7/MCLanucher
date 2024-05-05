@@ -1,0 +1,16 @@
+﻿<maui:MauiWinUIApplication
+    x:Class="MCLanucher.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:maui="using:Microsoft.Maui"
+    xmlns:local="using:MCLanucher.WinUI">
+    <Application.Resources>
+
+        <DataTemplate x:Key="MauiAppTitleBarTemplate">
+            <Grid Background="#111"  Canvas.ZIndex="1" >
+                <TextBlock Margin="20,0,0,0" VerticalAlignment="Center" FontWeight="Bold">WSM Launcher</TextBlock>
+            </Grid>
+        </DataTemplate>
+
+    </Application.Resources>
+</maui:MauiWinUIApplication>

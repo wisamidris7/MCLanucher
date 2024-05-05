@@ -1,0 +1,74 @@
+﻿@using System.ComponentModel
+@using CmlLib.Core.Downloader
+@using CmlLib.Core.Files
+@inherits LayoutComponentBase
+@inject CMLauncher CMLancher
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+        @if (Downloading || Checking)
+        {
+            <div class="fixed-bottom bg-light p-2 d-flex">
+                <div class="flex-grow-1 text-start">
+                    <label>Files Left To @(Checking ? "Check" : "Download"): @(AllFilesCount - DownloadedFiles)</label>
+                </div>
+                <div class="progress" style="flex: 3" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: @Percent%">@Percent%</div>
+                </div>
+            </div>
+        }
+    </main>
+</div>
+
+@code {
+    public int Percent = 0;
+    public int DownloadedFiles = 0;
+    public int AllFilesCount = 0;
+    public static bool Downloading = false;
+    public static bool Checking = false;
+    public static bool CanInteractive => !Downloading && !Checking;
+    protected override void OnInitialized()
+    {
+        // CMLancher.ProgressChanged += ProgressChanged;
+        CMLancher.FileChanged += FileChangedChanged;
+
+        base.OnInitialized();
+    }
+
+    public async void FileChangedChanged(DownloadFileChangedEventArgs e)
+    {
+        if (e.Source is IDownloader)
+        {
+            Downloading = true;
+            Checking = false;
+        }
+        else if (e.Source is IFileChecker)
+        {
+            Downloading = false;
+            Checking = true;
+        }
+        DownloadedFiles = e.ProgressedFileCount;
+        AllFilesCount = e.TotalFileCount;
+        Percent = (int)((double)DownloadedFiles / (double)AllFilesCount * 100);
+        if (Percent == 100){
+            Downloading = false;
+            Checking = false;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+    public async void ProgressChanged(object? _, ProgressChangedEventArgs e)
+    {
+        Percent = e.ProgressPercentage;
+        Downloading = true;
+        await InvokeAsync(StateHasChanged);
+    }
+}

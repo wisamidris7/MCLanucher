@@ -1,0 +1,39 @@
+﻿@page "/"
+@using CmlLib.Core.Auth
+@using CmlLib.Core.Version
+@using MCLanucher.Components.Layout
+@inject CMLauncher CMLauncher
+
+<h1>Welcome to wsm launcher</h1>
+<hr/>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width:100%">Version</th>
+            <th class="text-end" style="min-width: 240px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="overflow-auto">
+        @{
+            var versions = Directory.GetDirectories(CMLauncher.MinecraftPath.Versions).Select(e => e.Split('\\').LastOrDefault());
+        }
+        <Virtualize Items="versions.ToArray()">
+            <tr>
+                <td>@context</td>
+                <td class="text-end"><button disabled="@(!MainLayout.CanInteractive)" class="btn btn-dark" @onclick="() => Install(context)">Play now</button></td>
+            </tr>
+        </Virtualize>
+    </tbody>
+</table>
+
+@code {
+    public async Task Install(string version)
+    {
+        var process = await CMLauncher.CreateProcessAsync(version, new MLaunchOption
+            {
+                MaximumRamMb = 2048,
+                Session = MSession.CreateOfflineSession("hello123"),
+            });
+        process.Start();
+    }
+}
