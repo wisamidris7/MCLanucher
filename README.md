@@ -6,6 +6,7 @@
 # How to install
 
 So first to install it you have only to do these
+Click that link and choose release https://github.com/wisamidris7/MCLanucher/releases
 
 1. Install certicfacte by clicking on the *.cert file and click here
 ![image](https://github.com/wisamidris7/MCLanucher/assets/104096256/71394530-9569-4f75-849f-4f8ab0264947)
