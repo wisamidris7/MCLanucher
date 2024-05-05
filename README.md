@@ -19,8 +19,8 @@ Click that link and choose release https://github.com/wisamidris7/MCLanucher/rel
 
 # Special Thanks to
 
-CmlLib.Core
-Microsoft Maui
-Bootswatch
+1. CmlLib.Core
+2. Bootstrap
+3. Bootswatch
 
 ## You can support project with following me in github and youtube and star this repo and thanks
